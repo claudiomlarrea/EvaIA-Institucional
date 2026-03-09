@@ -3,46 +3,93 @@ from modules.docente import panel_docente
 from modules.admin import panel_admin
 st.markdown("""
 <style>
-
-.stApp {
-    background-color: #e9f3fb;
+.main {
+    background-color: #F8FAFC;
 }
 
-h1, h2, h3 {
-    color: #0b3c5d;
-}
-
-section[data-testid="stSidebar"] {
-    background-color: #cfe8ff;
-}
-
-.stButton>button {
-    background-color: #4da3ff;
+.evaia-header {
+    background: linear-gradient(90deg, #0B4F8A 0%, #1669B2 100%);
+    padding: 18px 22px;
+    border-radius: 12px;
     color: white;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
-.stRadio > label {
-    color: #0b3c5d;
+.evaia-header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
 }
 
+.evaia-header p {
+    margin: 4px 0 0 0;
+    font-size: 15px;
+}
+
+.subbox {
+    background-color: white;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border-left: 5px solid #0B4F8A;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    margin-bottom: 12px;
+}
+
+.metric-box {
+    background-color: white;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stButton > button,
+.stDownloadButton > button {
+    background-color: #0B4F8A !important;
+    color: white !important;
+    border-radius: 8px !important;
+    border: none !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 600 !important;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    background-color: #083A66 !important;
+    color: white !important;
+}
+
+div[data-testid="stForm"] {
+    background-color: white;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.small-note {
+    color: #4B5563;
+    font-size: 13px;
+}
 </style>
 """, unsafe_allow_html=True)
+3. Si querés además el mismo encabezado azul del prototipo
 
-st.set_page_config(
-    page_title="EvaIA UCCuyo",
-    page_icon="🧠",
-    layout="wide"
-)
+Agregá esta función en app.py:
 
-st.title("EvaIA")
-st.subheader("Observatorio de Inteligencia Artificial - Universidad Católica de Cuyo")
-
-st.write("Plataforma institucional de aprendizaje basado en problemas.")
-
-modo = st.sidebar.radio(
-    "Seleccioná un modo",
-    ["Estudiante", "Docente", "Administrador"]
-)
+def mostrar_encabezado():
+    st.markdown(
+        """
+        <div class="evaia-header">
+            <h1>EvaIA</h1>
+            <p>Plataforma de aprendizaje basado en problemas con inteligencia artificial</p>
+            <p><strong>Universidad Católica de Cuyo</strong> · Observatorio de Inteligencia Artificial</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    mostrar_encabezado()
 
 if modo == "Estudiante":
     st.header("Panel Estudiante")
