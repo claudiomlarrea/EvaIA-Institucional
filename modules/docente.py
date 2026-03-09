@@ -20,6 +20,7 @@ def panel_docente():
         desarrollo = st.text_area("Desarrollo del caso", height=180)
 
         st.subheader("Preguntas para el estudiante")
+
         p1 = st.text_input("Pregunta 1")
         p2 = st.text_input("Pregunta 2")
         p3 = st.text_input("Pregunta 3")
@@ -28,22 +29,43 @@ def panel_docente():
         diagnostico = st.text_area("Diagnóstico esperado (solo docente)", height=120)
 
         if st.button("Guardar caso"):
-            if carrera and titulo and asignatura and desarrollo and p1 and p2 and p3 and p4 and diagnostico:
+            faltantes = []
+
+            if not carrera or not carrera.strip():
+                faltantes.append("Carrera")
+            if not titulo or not titulo.strip():
+                faltantes.append("Título del caso")
+            if not asignatura or not asignatura.strip():
+                faltantes.append("Asignatura")
+            if not desarrollo or not desarrollo.strip():
+                faltantes.append("Desarrollo del caso")
+            if not p1 or not p1.strip():
+                faltantes.append("Pregunta 1")
+            if not p2 or not p2.strip():
+                faltantes.append("Pregunta 2")
+            if not p3 or not p3.strip():
+                faltantes.append("Pregunta 3")
+            if not p4 or not p4.strip():
+                faltantes.append("Pregunta 4")
+            if not diagnostico or not diagnostico.strip():
+                faltantes.append("Diagnóstico esperado")
+
+            if faltantes:
+                st.warning("Faltan estos campos: " + ", ".join(faltantes))
+            else:
                 guardar_caso(
-                    carrera,
-                    titulo,
-                    asignatura,
-                    desarrollo,
-                    p1,
-                    p2,
-                    p3,
-                    p4,
-                    diagnostico
+                    carrera.strip(),
+                    titulo.strip(),
+                    asignatura.strip(),
+                    desarrollo.strip(),
+                    p1.strip(),
+                    p2.strip(),
+                    p3.strip(),
+                    p4.strip(),
+                    diagnostico.strip()
                 )
                 st.success("Caso guardado correctamente")
                 st.rerun()
-            else:
-                st.warning("Completá todos los campos")
 
     st.divider()
 
