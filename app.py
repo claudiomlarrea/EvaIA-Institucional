@@ -15,6 +15,11 @@ try:
     from modules.estudiante import panel_estudiante
 except Exception:
     panel_estudiante = None
+    
+    from database import crear_tabla_casos, crear_tabla_respuestas
+
+crear_tabla_casos()
+crear_tabla_respuestas()
 
 # =========================================================
 # CONFIGURACIÓN GENERAL
