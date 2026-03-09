@@ -7,14 +7,18 @@ def panel_docente():
 
     crear_tabla_casos()
 
+    carrera = st.selectbox(
+        "Carrera",
+        ["Medicina", "Psicología", "Derecho"]
+    )
     titulo = st.text_input("Título del caso")
     asignatura = st.text_input("Asignatura")
     caso = st.text_area("Desarrollo del caso")
     diagnostico = st.text_area("Diagnóstico esperado")
 
     if st.button("Guardar caso"):
-        if titulo and asignatura and caso and diagnostico:
-            guardar_caso(titulo, asignatura, caso, diagnostico)
+        if carrera and titulo and asignatura and caso and diagnostico:
+            guardar_caso(carrera, titulo, asignatura, caso, diagnostico)
             st.success("Caso guardado correctamente en la base de datos.")
         else:
             st.warning("Completá todos los campos antes de guardar.")
@@ -25,10 +29,11 @@ def panel_docente():
     if casos:
         for caso_item in casos:
             st.markdown(f"**ID:** {caso_item[0]}")
-            st.markdown(f"**Título:** {caso_item[1]}")
-            st.markdown(f"**Asignatura:** {caso_item[2]}")
-            st.markdown(f"**Desarrollo:** {caso_item[3]}")
-            st.markdown(f"**Diagnóstico esperado:** {caso_item[4]}")
+            st.markdown(f"**Carrera:** {caso_item[1]}")
+            st.markdown(f"**Título:** {caso_item[2]}")
+            st.markdown(f"**Asignatura:** {caso_item[3]}")
+            st.markdown(f"**Desarrollo:** {caso_item[4]}")
+            st.markdown(f"**Diagnóstico esperado:** {caso_item[5]}")
             st.markdown("---")
     else:
         st.info("Todavía no hay casos cargados.")
