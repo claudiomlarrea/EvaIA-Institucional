@@ -1,6 +1,19 @@
 import streamlit as st
 from modules.docente import panel_docente
 from modules.admin import panel_admin
+
+# =========================================================
+# CONFIGURACIÓN GENERAL
+# =========================================================
+st.set_page_config(
+    page_title="EvaIA UCCuyo",
+    page_icon="🧠",
+    layout="wide"
+)
+
+# =========================================================
+# ESTILOS
+# =========================================================
 st.markdown("""
 <style>
 .main {
@@ -74,10 +87,10 @@ div[data-testid="stForm"] {
 }
 </style>
 """, unsafe_allow_html=True)
-3. Si querés además el mismo encabezado azul del prototipo
 
-Agregá esta función en app.py:
-
+# =========================================================
+# ENCABEZADO
+# =========================================================
 def mostrar_encabezado():
     st.markdown(
         """
@@ -89,14 +102,32 @@ def mostrar_encabezado():
         """,
         unsafe_allow_html=True
     )
-    mostrar_encabezado()
 
+# =========================================================
+# INTERFAZ PRINCIPAL
+# =========================================================
+mostrar_encabezado()
+
+modo = st.sidebar.radio(
+    "Seleccioná un modo",
+    ["Estudiante", "Docente", "Administrador"]
+)
+
+# =========================================================
+# MODO ESTUDIANTE
+# =========================================================
 if modo == "Estudiante":
     st.header("Panel Estudiante")
     st.write("Módulo de resolución de casos en construcción.")
 
+# =========================================================
+# MODO DOCENTE
+# =========================================================
 elif modo == "Docente":
     panel_docente()
 
+# =========================================================
+# MODO ADMINISTRADOR
+# =========================================================
 elif modo == "Administrador":
     panel_admin()
