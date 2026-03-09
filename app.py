@@ -1,38 +1,23 @@
 import streamlit as st
-
-# Importaciones seguras de módulos
-try:
-    from modules.docente import panel_docente
-except Exception:
-    panel_docente = None
-
-try:
-    from modules.admin import panel_admin
-except Exception:
-    panel_admin = None
+from database import crear_tabla_casos, crear_tabla_respuestas
+from modules.docente import panel_docente
+from modules.admin import panel_admin
 
 try:
     from modules.estudiante import panel_estudiante
 except Exception:
     panel_estudiante = None
-    
-    from database import crear_tabla_casos, crear_tabla_respuestas
 
-crear_tabla_casos()
-crear_tabla_respuestas()
-
-# =========================================================
-# CONFIGURACIÓN GENERAL
-# =========================================================
 st.set_page_config(
     page_title="EvaIA UCCuyo",
     page_icon="🧠",
     layout="wide"
 )
 
-# =========================================================
-# ESTILOS
-# =========================================================
+# Crear tablas al iniciar
+crear_tabla_casos()
+crear_tabla_respuestas()
+
 st.markdown("""
 <style>
 .main {
@@ -77,9 +62,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# ENCABEZADO
-# =========================================================
 def mostrar_encabezado():
     st.markdown(
         """
@@ -92,9 +74,6 @@ def mostrar_encabezado():
         unsafe_allow_html=True
     )
 
-# =========================================================
-# INTERFAZ PRINCIPAL
-# =========================================================
 mostrar_encabezado()
 
 modo = st.sidebar.radio(
@@ -110,15 +89,7 @@ if modo == "Estudiante":
         st.warning("El módulo estudiante todavía no está disponible o tiene un error.")
 
 elif modo == "Docente":
-    if panel_docente is not None:
-        panel_docente()
-    else:
-        st.header("Panel Docente")
-        st.warning("El módulo docente todavía no está disponible o tiene un error.")
+    panel_docente()
 
 elif modo == "Administrador":
-    if panel_admin is not None:
-        panel_admin()
-    else:
-        st.header("Panel Administrador")
-        st.warning("El módulo administrador todavía no está disponible o tiene un error.")
+    panel_admin()
