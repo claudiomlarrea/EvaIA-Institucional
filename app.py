@@ -2,22 +2,24 @@ import streamlit as st
 from database import crear_tabla_casos, crear_tabla_respuestas
 from modules.docente import panel_docente
 from modules.admin import panel_admin
+from modules.estudiante import panel_estudiante
 
-try:
-    from modules.estudiante import panel_estudiante
-except Exception:
-    panel_estudiante = None
-
+# =========================================================
+# CONFIGURACIÓN GENERAL
+# =========================================================
 st.set_page_config(
     page_title="EvaIA UCCuyo",
     page_icon="🧠",
     layout="wide"
 )
 
-# Crear tablas al iniciar
+# Crear tablas si no existen
 crear_tabla_casos()
 crear_tabla_respuestas()
 
+# =========================================================
+# ESTILOS
+# =========================================================
 st.markdown("""
 <style>
 .main {
@@ -62,6 +64,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# =========================================================
+# ENCABEZADO
+# =========================================================
 def mostrar_encabezado():
     st.markdown(
         """
@@ -74,6 +79,9 @@ def mostrar_encabezado():
         unsafe_allow_html=True
     )
 
+# =========================================================
+# INTERFAZ PRINCIPAL
+# =========================================================
 mostrar_encabezado()
 
 modo = st.sidebar.radio(
@@ -82,11 +90,7 @@ modo = st.sidebar.radio(
 )
 
 if modo == "Estudiante":
-    if panel_estudiante is not None:
-        panel_estudiante()
-    else:
-        st.header("Panel Estudiante")
-        st.warning("El módulo estudiante todavía no está disponible o tiene un error.")
+    panel_estudiante()
 
 elif modo == "Docente":
     panel_docente()
