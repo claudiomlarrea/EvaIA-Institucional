@@ -11,8 +11,11 @@ def crear_tabla_casos():
     conn = conectar()
     cur = conn.cursor()
 
+    # BORRA la tabla anterior si existía con otra estructura
+    cur.execute("DROP TABLE IF EXISTS casos")
+
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS casos (
+    CREATE TABLE casos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         carrera TEXT,
         titulo TEXT,
