@@ -66,6 +66,21 @@ def guardar_caso(carrera, titulo, asignatura, desarrollo, p1, p2, p3, p4, diagno
     conn.close()
 
 
+def actualizar_caso(caso_id, carrera, titulo, asignatura, desarrollo, p1, p2, p3, p4, diagnostico):
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+    UPDATE casos
+    SET carrera = ?, titulo = ?, asignatura = ?, desarrollo = ?,
+        pregunta1 = ?, pregunta2 = ?, pregunta3 = ?, pregunta4 = ?, diagnostico = ?
+    WHERE id = ?
+    """, (carrera, titulo, asignatura, desarrollo, p1, p2, p3, p4, diagnostico, caso_id))
+
+    conn.commit()
+    conn.close()
+
+
 def obtener_casos():
     conn = conectar()
     cur = conn.cursor()
