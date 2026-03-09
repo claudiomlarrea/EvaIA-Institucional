@@ -81,6 +81,31 @@ def obtener_casos():
     return casos
 
 
+def obtener_caso_por_id(caso_id):
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+    SELECT id, carrera, titulo, asignatura, desarrollo, pregunta1, pregunta2, pregunta3, pregunta4, diagnostico
+    FROM casos
+    WHERE id = ?
+    """, (caso_id,))
+
+    caso = cur.fetchone()
+    conn.close()
+    return caso
+
+
+def eliminar_caso(caso_id):
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM casos WHERE id = ?", (caso_id,))
+
+    conn.commit()
+    conn.close()
+
+
 def guardar_respuesta(caso_id, estudiante, r1, r2, r3, r4):
     conn = conectar()
     cur = conn.cursor()
