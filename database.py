@@ -3,19 +3,18 @@ import os
 
 DB_PATH = "data/evaia.db"
 
+
 def conectar():
     os.makedirs("data", exist_ok=True)
     return sqlite3.connect(DB_PATH)
+
 
 def crear_tabla_casos():
     conn = conectar()
     cur = conn.cursor()
 
-    # BORRA la tabla anterior si existía con otra estructura
-    cur.execute("DROP TABLE IF EXISTS casos")
-
     cur.execute("""
-    CREATE TABLE casos (
+    CREATE TABLE IF NOT EXISTS casos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         carrera TEXT,
         titulo TEXT,
@@ -31,6 +30,7 @@ def crear_tabla_casos():
 
     conn.commit()
     conn.close()
+
 
 def crear_tabla_respuestas():
     conn = conectar()
@@ -51,39 +51,35 @@ def crear_tabla_respuestas():
     conn.commit()
     conn.close()
 
-def guardar_caso(carrera, titulo, asignatura, desarrollo,
-                 p1, p2, p3, p4, diagnostico):
 
+def guardar_caso(carrera, titulo, asignatura, desarrollo, p1, p2, p3, p4, diagnostico):
     conn = conectar()
     cur = conn.cursor()
 
     cur.execute("""
     INSERT INTO casos
-    (carrera, titulo, asignatura, desarrollo,
-     pregunta1, pregunta2, pregunta3, pregunta4, diagnostico)
+    (carrera, titulo, asignatura, desarrollo, pregunta1, pregunta2, pregunta3, pregunta4, diagnostico)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-    (carrera, titulo, asignatura, desarrollo,
-     p1, p2, p3, p4, diagnostico))
+    """, (carrera, titulo, asignatura, desarrollo, p1, p2, p3, p4, diagnostico))
 
     conn.commit()
     conn.close()
+
 
 def obtener_casos():
     conn = conectar()
     cur = conn.cursor()
 
     cur.execute("""
-    SELECT id, carrera, titulo, asignatura,
-           desarrollo, pregunta1, pregunta2,
-           pregunta3, pregunta4, diagnostico
+    SELECT id, carrera, titulo, asignatura, desarrollo, pregunta1, pregunta2, pregunta3, pregunta4, diagnostico
     FROM casos
+    ORDER BY id DESC
     """)
 
     casos = cur.fetchall()
-
     conn.close()
     return casos
+
 
 def guardar_respuesta(caso_id, estudiante, r1, r2, r3, r4):
     conn = conectar()
@@ -98,6 +94,7 @@ def guardar_respuesta(caso_id, estudiante, r1, r2, r3, r4):
     conn.commit()
     conn.close()
 
+
 def obtener_respuestas():
     conn = conectar()
     cur = conn.cursor()
@@ -105,9 +102,9 @@ def obtener_respuestas():
     cur.execute("""
     SELECT id, caso_id, estudiante, respuesta1, respuesta2, respuesta3, respuesta4
     FROM respuestas
+    ORDER BY id DESC
     """)
 
     respuestas = cur.fetchall()
-
     conn.close()
     return respuestas
