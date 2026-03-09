@@ -16,6 +16,7 @@ def crear_tabla_casos():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS casos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        carrera TEXT,
         titulo TEXT,
         asignatura TEXT,
         desarrollo TEXT,
@@ -27,14 +28,14 @@ def crear_tabla_casos():
     conn.close()
 
 
-def guardar_caso(titulo, asignatura, desarrollo, diagnostico):
+def guardar_caso(carrera, titulo, asignatura, desarrollo, diagnostico):
     conn = conectar()
     cur = conn.cursor()
 
     cur.execute("""
-    INSERT INTO casos (titulo, asignatura, desarrollo, diagnostico)
-    VALUES (?, ?, ?, ?)
-    """, (titulo, asignatura, desarrollo, diagnostico))
+    INSERT INTO casos (carrera, titulo, asignatura, desarrollo, diagnostico)
+    VALUES (?, ?, ?, ?, ?)
+    """, (carrera, titulo, asignatura, desarrollo, diagnostico))
 
     conn.commit()
     conn.close()
@@ -44,7 +45,7 @@ def obtener_casos():
     conn = conectar()
     cur = conn.cursor()
 
-    cur.execute("SELECT id, titulo, asignatura, desarrollo, diagnostico FROM casos")
+    cur.execute("SELECT id, carrera, titulo, asignatura, desarrollo, diagnostico FROM casos")
     casos = cur.fetchall()
 
     conn.close()
