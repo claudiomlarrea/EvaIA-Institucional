@@ -1,14 +1,33 @@
 import streamlit as st
-from modules.docente import panel_docente
-from modules.admin import panel_admin
-from modules.estudiante import panel_estudiante
 
+# Importaciones seguras de módulos
+try:
+    from modules.docente import panel_docente
+except Exception:
+    panel_docente = None
+
+try:
+    from modules.admin import panel_admin
+except Exception:
+    panel_admin = None
+
+try:
+    from modules.estudiante import panel_estudiante
+except Exception:
+    panel_estudiante = None
+
+# =========================================================
+# CONFIGURACIÓN GENERAL
+# =========================================================
 st.set_page_config(
     page_title="EvaIA UCCuyo",
     page_icon="🧠",
     layout="wide"
 )
 
+# =========================================================
+# ESTILOS
+# =========================================================
 st.markdown("""
 <style>
 .main {
@@ -53,6 +72,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# =========================================================
+# ENCABEZADO
+# =========================================================
 def mostrar_encabezado():
     st.markdown(
         """
@@ -65,6 +87,9 @@ def mostrar_encabezado():
         unsafe_allow_html=True
     )
 
+# =========================================================
+# INTERFAZ PRINCIPAL
+# =========================================================
 mostrar_encabezado()
 
 modo = st.sidebar.radio(
@@ -73,10 +98,22 @@ modo = st.sidebar.radio(
 )
 
 if modo == "Estudiante":
-    panel_estudiante()
+    if panel_estudiante is not None:
+        panel_estudiante()
+    else:
+        st.header("Panel Estudiante")
+        st.warning("El módulo estudiante todavía no está disponible o tiene un error.")
 
 elif modo == "Docente":
-    panel_docente()
+    if panel_docente is not None:
+        panel_docente()
+    else:
+        st.header("Panel Docente")
+        st.warning("El módulo docente todavía no está disponible o tiene un error.")
 
 elif modo == "Administrador":
-    panel_admin()
+    if panel_admin is not None:
+        panel_admin()
+    else:
+        st.header("Panel Administrador")
+        st.warning("El módulo administrador todavía no está disponible o tiene un error.")
