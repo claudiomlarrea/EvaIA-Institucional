@@ -3,6 +3,7 @@ from database import obtener_casos, guardar_respuesta
 
 
 def panel_estudiante():
+
     st.header("Panel Estudiante")
     st.write("Resolución de casos clínicos para aprendizaje basado en problemas")
 
@@ -12,11 +13,39 @@ def panel_estudiante():
         st.info("Todavía no hay casos disponibles.")
         return
 
-    opciones = {f"{caso[2]} ({caso[3]})": caso for caso in casos}
-    seleccion = st.selectbox("Seleccioná un caso clínico", list(opciones.keys()))
-    caso = opciones[seleccion]
+    st.subheader("Seleccionar caso")
 
+    opciones = {}
+
+    for caso in casos:
+        texto = f"{caso[1]} | {caso[3]} | {caso[2]}"
+        opciones[texto] = caso
+
+    seleccion = st.selectbox(
+        "Carrera | Asignatura | Título del caso",
+        list(opciones.keys())
+    )
+
+    caso = opciones[seleccion]
     caso_id = caso[0]
+
+    if st.button("Abrir caso"):
+
+        st.session_state["caso_activo"] = caso_id
+
+
+    if "caso_activo" not in st.session_state:
+        return
+
+
+    caso = None
+    for c in casos:
+        if c[0] == st.session_state["caso_activo"]:
+            caso = c
+            break
+
+
+    st.divider()
 
     st.subheader(caso[2])
     st.write(f"**Carrera:** {caso[1]}")
@@ -27,11 +56,11 @@ def panel_estudiante():
 
     st.markdown("### Preguntas")
 
-    estudiante = st.text_input("Nombre del estudiante", key=f"estudiante_{caso_id}")
+    estudiante = st.text_input("Nombre del estudiante")
 
     respuestas = {}
 
-    if caso[5] and caso[5].strip():
+    if caso[5]:
         respuestas["r1"] = st.text_area(
             f"1. {caso[5]}",
             height=120,
@@ -40,7 +69,7 @@ def panel_estudiante():
     else:
         respuestas["r1"] = ""
 
-    if caso[6] and caso[6].strip():
+    if caso[6]:
         respuestas["r2"] = st.text_area(
             f"2. {caso[6]}",
             height=120,
@@ -49,7 +78,7 @@ def panel_estudiante():
     else:
         respuestas["r2"] = ""
 
-    if caso[7] and caso[7].strip():
+    if caso[7]:
         respuestas["r3"] = st.text_area(
             f"3. {caso[7]}",
             height=120,
@@ -58,7 +87,7 @@ def panel_estudiante():
     else:
         respuestas["r3"] = ""
 
-    if caso[8] and caso[8].strip():
+    if caso[8]:
         respuestas["r4"] = st.text_area(
             f"4. {caso[8]}",
             height=120,
@@ -67,24 +96,29 @@ def panel_estudiante():
     else:
         respuestas["r4"] = ""
 
-    if st.button("Enviar respuestas", key=f"enviar_{caso_id}"):
+    if st.button("Enviar respuestas"):
+
         faltantes = []
 
         if not estudiante.strip():
             faltantes.append("Nombre del estudiante")
 
-        if caso[5] and caso[5].strip() and not respuestas["r1"].strip():
+        if caso[5] and not respuestas["r1"].strip():
             faltantes.append("Respuesta 1")
-        if caso[6] and caso[6].strip() and not respuestas["r2"].strip():
+
+        if caso[6] and not respuestas["r2"].strip():
             faltantes.append("Respuesta 2")
-        if caso[7] and caso[7].strip() and not respuestas["r3"].strip():
+
+        if caso[7] and not respuestas["r3"].strip():
             faltantes.append("Respuesta 3")
-        if caso[8] and caso[8].strip() and not respuestas["r4"].strip():
+
+        if caso[8] and not respuestas["r4"].strip():
             faltantes.append("Respuesta 4")
 
         if faltantes:
             st.warning("Faltan estos campos: " + ", ".join(faltantes))
         else:
+
             guardar_respuesta(
                 caso_id,
                 estudiante.strip(),
@@ -93,4 +127,5 @@ def panel_estudiante():
                 respuestas["r3"].strip(),
                 respuestas["r4"].strip()
             )
+
             st.success("Respuestas enviadas correctamente")
