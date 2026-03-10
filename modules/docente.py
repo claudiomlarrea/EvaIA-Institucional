@@ -34,7 +34,7 @@ def panel_docente():
             p4 = st.text_input("Pregunta 4")
 
             diagnostico = st.text_area(
-                "Diagnóstico esperado (solo docente)",
+                "Resolución esperada del caso (solo docente)",
                 height=120
             )
 
