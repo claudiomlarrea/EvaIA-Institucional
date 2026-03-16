@@ -2,12 +2,14 @@ import streamlit as st
 from database import (
     crear_tabla_casos,
     crear_tabla_respuestas,
-    crear_tabla_usuarios
+    crear_tabla_usuarios,
+    crear_admin_inicial
 )
 from modules.docente import panel_docente
 from modules.admin import panel_admin
 from modules.estudiante import panel_estudiante
 from modules.login import pantalla_login
+from modules.registro import pantalla_registro
 
 # =========================================================
 # CONFIGURACIÓN GENERAL
@@ -23,7 +25,14 @@ crear_tabla_casos()
 crear_tabla_respuestas()
 crear_tabla_usuarios()
 
-# Estado inicial de sesión
+# Crear admin inicial solo si no existe ninguno
+crear_admin_inicial(
+    "Administrador EvaIA",
+    "admin@evaia.com",
+    "admin123"
+)
+
+# Estado de sesión
 if "logueado" not in st.session_state:
     st.session_state["logueado"] = False
 
@@ -32,6 +41,9 @@ if "usuario" not in st.session_state:
 
 if "rol" not in st.session_state:
     st.session_state["rol"] = ""
+
+if "pantalla" not in st.session_state:
+    st.session_state["pantalla"] = "login"
 
 # =========================================================
 # ESTILOS
@@ -100,11 +112,11 @@ def mostrar_encabezado():
 # =========================================================
 mostrar_encabezado()
 
-# Si NO está logueado, mostrar pantalla de acceso
 if not st.session_state["logueado"]:
-    pantalla_login()
-
-# Si ya está logueado, mostrar solo el panel correspondiente al rol
+    if st.session_state["pantalla"] == "login":
+        pantalla_login()
+    elif st.session_state["pantalla"] == "registro":
+        pantalla_registro()
 else:
     st.sidebar.markdown("### Usuario")
     st.sidebar.write(st.session_state["usuario"])
