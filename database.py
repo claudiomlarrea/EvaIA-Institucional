@@ -214,3 +214,24 @@ def autenticar_usuario(email, password):
     conn.close()
 
     return usuario
+
+def obtener_usuario_por_email(email):
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+    SELECT id, nombre, email, rol
+    FROM usuarios
+    WHERE email = ?
+    """, (email,))
+
+    usuario = cur.fetchone()
+    conn.close()
+    return usuario
+
+
+def crear_usuario_si_no_existe(nombre, email, password, rol):
+    usuario = obtener_usuario_por_email(email)
+
+    if usuario is None:
+        crear_usuario(nombre, email, password, rol)
