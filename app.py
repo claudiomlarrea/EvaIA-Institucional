@@ -1,8 +1,13 @@
 import streamlit as st
-from database import crear_tabla_casos, crear_tabla_respuestas
+from database import (
+    crear_tabla_casos,
+    crear_tabla_respuestas,
+    crear_tabla_usuarios
+)
 from modules.docente import panel_docente
 from modules.admin import panel_admin
 from modules.estudiante import panel_estudiante
+from modules.login import pantalla_login
 
 # =========================================================
 # CONFIGURACIÓN GENERAL
@@ -16,6 +21,17 @@ st.set_page_config(
 # Crear tablas si no existen
 crear_tabla_casos()
 crear_tabla_respuestas()
+crear_tabla_usuarios()
+
+# Estado inicial de sesión
+if "logueado" not in st.session_state:
+    st.session_state["logueado"] = False
+
+if "usuario" not in st.session_state:
+    st.session_state["usuario"] = ""
+
+if "rol" not in st.session_state:
+    st.session_state["rol"] = ""
 
 # =========================================================
 # ESTILOS
@@ -84,16 +100,31 @@ def mostrar_encabezado():
 # =========================================================
 mostrar_encabezado()
 
-modo = st.sidebar.radio(
-    "Seleccioná un modo",
-    ["Estudiante", "Docente", "Administrador"]
-)
+# Si NO está logueado, mostrar pantalla de acceso
+if not st.session_state["logueado"]:
+    pantalla_login()
 
-if modo == "Estudiante":
-    panel_estudiante()
+# Si ya está logueado, mostrar solo el panel correspondiente al rol
+else:
+    st.sidebar.markdown("### Usuario")
+    st.sidebar.write(st.session_state["usuario"])
+    st.sidebar.markdown("### Rol")
+    st.sidebar.write(st.session_state["rol"])
 
-elif modo == "Docente":
-    panel_docente()
+    if st.sidebar.button("Cerrar sesión"):
+        st.session_state.clear()
+        st.rerun()
 
-elif modo == "Administrador":
-    panel_admin()
+    rol = st.session_state["rol"]
+
+    if rol == "estudiante":
+        panel_estudiante()
+
+    elif rol == "docente":
+        panel_docente()
+
+    elif rol == "admin":
+        panel_admin()
+
+    else:
+        st.error("Rol no reconocido.")
