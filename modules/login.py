@@ -3,24 +3,33 @@ from database import autenticar_usuario
 
 
 def pantalla_login():
-
     st.title("EvaIA")
     st.subheader("Acceso a la plataforma")
 
     email = st.text_input("Correo electrónico")
     password = st.text_input("Contraseña", type="password")
 
-    if st.button("Ingresar"):
+    col1, col2 = st.columns(2)
 
-        usuario = autenticar_usuario(email, password)
+    with col1:
+        if st.button("Ingresar"):
+            usuario = autenticar_usuario(email.strip(), password.strip())
 
-        if usuario:
+            if not usuario:
+                st.error("Usuario o contraseña incorrectos")
+            else:
+                user_id, nombre, rol, estado = usuario
 
-            st.session_state["usuario"] = usuario[1]
-            st.session_state["rol"] = usuario[2]
-            st.session_state["logueado"] = True
+                if estado != "activo":
+                    st.warning("Tu usuario todavía no está activo. Esperá la aprobación del administrador.")
+                else:
+                    st.session_state["logueado"] = True
+                    st.session_state["usuario_id"] = user_id
+                    st.session_state["usuario"] = nombre
+                    st.session_state["rol"] = rol
+                    st.rerun()
 
+    with col2:
+        if st.button("Quiero registrarme"):
+            st.session_state["pantalla"] = "registro"
             st.rerun()
-
-        else:
-            st.error("Usuario o contraseña incorrectos")
