@@ -148,3 +148,18 @@ def obtener_respuestas():
     respuestas = cur.fetchall()
     conn.close()
     return respuestas
+
+def crear_usuario(nombre, email, password, rol):
+
+    import sqlite3
+
+    conn = sqlite3.connect("evaia.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO usuarios (nombre, email, password, rol)
+    VALUES (?, ?, ?, ?)
+    """, (nombre, email, password, rol))
+
+    conn.commit()
+    conn.close()
