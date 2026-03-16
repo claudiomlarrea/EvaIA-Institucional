@@ -163,3 +163,38 @@ def crear_usuario(nombre, email, password, rol):
 
     conn.commit()
     conn.close()
+
+def crear_usuario(nombre, email, password, rol):
+
+    import sqlite3
+
+    conn = sqlite3.connect("evaia.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO usuarios (nombre, email, password, rol)
+    VALUES (?, ?, ?, ?)
+    """, (nombre, email, password, rol))
+
+    conn.commit()
+    conn.close()
+
+def autenticar_usuario(email, password):
+
+    import sqlite3
+
+    conn = sqlite3.connect("evaia.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id, nombre, rol FROM usuarios
+    WHERE email=? AND password=?
+    """, (email, password))
+
+    usuario = cursor.fetchone()
+
+    conn.close()
+
+    return usuario
+
+
