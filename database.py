@@ -63,10 +63,13 @@ def crear_tabla_usuarios():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        email TEXT UNIQUE,
-        password TEXT,
-        rol TEXT
+        nombre TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        rol TEXT NOT NULL,
+        estado TEXT NOT NULL,
+        carrera TEXT,
+        asignatura TEXT
     )
     """)
 
@@ -184,54 +187,115 @@ def obtener_respuestas():
 # USUARIOS
 # =========================================================
 
-def crear_usuario(nombre, email, password, rol):
-
+def registrar_usuario(nombre, email, password, rol, carrera, asignatura):
     conn = conectar()
     cur = conn.cursor()
 
     cur.execute("""
-    INSERT INTO usuarios (nombre, email, password, rol)
-    VALUES (?, ?, ?, ?)
-    """, (nombre, email, password, rol))
+    INSERT INTO usuarios (nombre, email, password, rol, estado, carrera, asignatura)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (nombre, email, password, rol, "pendiente", carrera, asignatura))
 
     conn.commit()
     conn.close()
 
 
 def autenticar_usuario(email, password):
-
     conn = conectar()
     cur = conn.cursor()
 
     cur.execute("""
-    SELECT id, nombre, rol
+    SELECT id, nombre, rol, estado
     FROM usuarios
-    WHERE email=? AND password=?
+    WHERE email = ? AND password = ?
     """, (email, password))
 
     usuario = cur.fetchone()
-
     conn.close()
-
     return usuario
 
-def obtener_usuario_por_email(email):
+
+def obtener_usuarios():
     conn = conectar()
     cur = conn.cursor()
 
     cur.execute("""
-    SELECT id, nombre, email, rol
+    SELECT id, nombre, email, rol, estado, carrera, asignatura
     FROM usuarios
-    WHERE email = ?
-    """, (email,))
+    ORDER BY id DESC
+    """)
 
-    usuario = cur.fetchone()
+    usuarios = cur.fetchall()
     conn.close()
-    return usuario
+    return usuarios
 
 
-def crear_usuario_si_no_existe(nombre, email, password, rol):
-    usuario = obtener_usuario_por_email(email)
+def obtener_usuarios_pendientes():
+    conn = conectar()
+    cur = conn.cursor()
 
-    if usuario is None:
-        crear_usuario(nombre, email, password, rol)
+    cur.execute("""
+    SELECT id, nombre, email, rol, estado, carrera, asignatura
+    FROM usuarios
+    WHERE estado = 'pendiente'
+    ORDER BY id DESC
+    """)
+
+    usuarios = cur.fetchall()
+    conn.close()
+    return usuarios
+
+
+def actualizar_estado_usuario(usuario_id, nuevo_estado):
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+    UPDATE usuarios
+    SET estado = ?
+    WHERE id = ?
+    """, (nuevo_estado, usuario_id))
+
+    conn.commit()
+    conn.close()
+
+
+def eliminar_usuario(usuario_id):
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM usuarios WHERE id = ?", (usuario_id,))
+
+    conn.commit()
+    conn.close()
+
+
+def existe_admin():
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+    SELECT COUNT(*)
+    FROM usuarios
+    WHERE rol = 'admin'
+    """)
+
+    cantidad = cur.fetchone()[0]
+    conn.close()
+    return cantidad > 0
+
+
+def crear_admin_inicial(nombre, email, password):
+    if existe_admin():
+        return
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+    INSERT INTO usuarios (nombre, email, password, rol, estado, carrera, asignatura)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (nombre, email, password, "admin", "activo", "Administración", "EvaIA"))
+
+    conn.commit()
+    conn.close()
